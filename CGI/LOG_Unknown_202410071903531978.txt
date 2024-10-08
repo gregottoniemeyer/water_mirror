@@ -1,0 +1,76 @@
+Drop & Render log file
+We use this file to give support if needed. Please leave it inside your project folder.
+
+CheckScene started.
+
+PROJECT FILE: 365_sunrises_08.blend
+
+CAMERA [SUCCESS] - Active camera: Camera
+FILE TYPE [SUCCESS] - Correct output format: JPEG
+PATH [SUCCESS] - Output Settings
+
+
+[FILE ERRORS]
+
+[TEXTURELIST]
+/Volumes/Consulting/Salesforce Tower/CGI/../img/Transbay_Pixel_Mask.png,/textures
+
+Submit Scene Started.
+
+
+[PACK ASSETS]: FALSE
+
+BLENDER VERSION              4.0.1
+BLENDER PLUGIN               (2, 47, 0)
+ENGINE                       CYCLES
+DEVICE                       CPU
+
+OUTPUT                       /Volumes/Consulting/Salesforce Tower/Render/sun_08/sun_08
+
+ADVANCED TAB
+[CUSTOM FRAME LIST]          
+[CUSTOM SLICE NUMBER]        1
+[CUSTOM POOL]                
+[CUSTOM PRIORITY]            
+[CUSTOM INSTALL PATH]        /Applications/DropandRender
+[CUSTOM PLUGIN]              
+[CUSTOM PLUGIN REPLACE]      False
+[CUSTOM INSTALL PATH]        
+[DELIVERY METHOD]            frame
+[CUSTOM BLENDER VERSION]     version.auto
+
+[App Profile]                BLENDER_4.0.
+[Corrected App Profile]      BLENDER_4.0.
+
+[SMART UPLOAD]     True
+
+BATFILE: /Users/gregniemeyer/Library/Application Support/Blender/4.0/config/DropRender.sh
+SYSTEM: Darwin
+
+[appProfile]                 BLENDER_4.0.
+[deliveryMethod]             frame
+[outputFolder]               /Volumes/Consulting/Salesforce Tower/Render/sun_08
+[pool]                       BLENDER_CYCLES
+[projectFolder]              /Volumes/Consulting/Salesforce Tower/CGI
+[parentProjectFolder]        202410071903531978
+[renderQueue]                SAPPHIRE
+[sceneFile]                  365_sunrises_08.blend
+[sceneName]                  365_sunrises_08
+[stepFrame]                  1
+[framePerSlice]              1
+[imageFormat]                JPEG
+[imagePrefix]                sun_08
+[useGPU]
+[syncUploadList]             /Applications/DropandRender/tmp/202410071903531978/texturelistfile_202410071903531978.txt
+[transferProtocol]           SYNC
+[renderPluginsUsed]          BLENDER_CYCLES
+[startFrame]                 0
+[endFrame]                   2000
+[jobDescription]             CYCLES
+
+
+CMD: /Applications/DropandRender/ccl --submitJob  --template blender --appProfile BLENDER_4.0. --deliveryMethod frame --jobId "BlenderPlugin 365_sunrises_08 202410071903531978" --outputFolder "/Volumes/Consulting/Salesforce Tower/Render/sun_08" --pool BLENDER_CYCLES --projectFolder "/Volumes/Consulting/Salesforce Tower/CGI/" --parentProjectFolder 202410071903531978 --renderQueue SAPPHIRE --sceneFile "365_sunrises_08.blend" --sceneName "365_sunrises_08" --stepFrame 1 --framePerSlice 1 --imageFormat JPEG --imagePrefix "sun_08" --useGpu --syncUploadList "/Applications/DropandRender/tmp/202410071903531978/texturelistfile_202410071903531978.txt" --transferProtocol SYNC --renderPluginsUsed BLENDER_CYCLES --customScript "SCRIPTS/Blender_CustomScript_02.py" --startFrame 0 --endFrame 2000 --jobDescription CYCLES
+
+CCL OUTPUT: 
+Error   3: Unable to connect to render farm service. Please contact render farm service administrator.
+
