@@ -2,7 +2,8 @@ import bpy
 import csv
 
 # Load the data from the CSV file
-data_file_path = 'Documents/WaterProjects/WeatherMirror/github/water_mirror/data/generated.csv'
+data_file_path = '/Volumes/Consulting/Salesforce Tower/data/generated.csv'
+
 
 # Extract water column data
 water_column = []
@@ -15,15 +16,15 @@ with open(data_file_path, 'r') as file:
 bpy.context.scene.tool_settings.transform_pivot_point = 'CURSOR'
 
 # Get the hooks from the collection (replace 'HooksCollection' with the actual name of the collection)
-hook_collection_name = "HooksCollection"  # Replace with the actual name of the collection
+hook_collection_name = "hooks"  # Replace with the actual name of the collection
 hook_collection = bpy.data.collections.get(hook_collection_name)
 
 # Parameters
-hook_count = 68  # Number of hooks
-frames_total = len(water_column) - hook_count  # Total number of frames to animate
+hook_count = 513  # Number of hooks
+frames_total = min(360, len(water_column) - hook_count)  # Total number of frames to animate, but limited to 3600
 
 if hook_collection and frames_total > 0:
-    # Iterate through each frame of the animation
+    # Iterate through each frame of the animation, up to frame 3600
     for frame in range(frames_total):
         # Iterate over all hooks, from the first to the last
         for hook_idx in range(hook_count):
@@ -43,6 +44,6 @@ if hook_collection and frames_total > 0:
             # Insert a keyframe for the Z-scale
             hook.keyframe_insert(data_path="scale", index=2, frame=frame + 1)  # Index 2 is for Z-axis
     
-    print("Keyframes set for all hooks.")
+    print("Keyframes set for all hooks up to frame 3600.")
 else:
     print(f"Collection '{hook_collection_name}' not found or insufficient data.")
