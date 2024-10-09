@@ -1,0 +1,62 @@
+import bpy
+import csv
+
+# Load the data from the CSV file
+data_file_path = '/Volumes/Consulting/Salesforce Tower/data/generated.csv'
+
+# Extract water column data
+water_column = []
+with open(data_file_path, 'r') as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        water_column.append(float(row['water']))
+
+# Ensure we are in object mode
+bpy.ops.object.mode_set(mode='OBJECT')
+
+# Get the curve object by name (replace 'birdCurve' with the actual name of your curve)
+curve = bpy.data.objects.get("birdCurve")
+if curve is None:
+    raise ValueError("Object 'birdCurve' not found.")
+
+# Parameters
+cv_count = len(curve.data.splines[0].bezier_points) if curve.data.splines[0].type == 'BEZIER' else len(curve.data.splines[0].points)
+frames_total = min(360, len(water_column) - cv_count)  # Total number of frames to animate, but limited to 360
+
+if curve and frames_total > 0:
+    # Switch to edit mode to manipulate the CVs
+    bpy.context.view_layer.objects.active = curve
+    bpy.ops.object.mode_set(mode='EDIT')
+    
+    # Access the splines and control points (CVs)
+    spline = curve.data.splines[0]  # Assuming we're working with the first spline of the curve
+
+    if spline.type == 'BEZIER':
+        points = spline.bezier_points
+    else:
+        points = spline.points
+
+    # Iterate through each frame of the animation, up to frames_total
+    for frame in range(frames_total):
+        # Iterate over all CV points, from the first to the last
+        for cv_idx in range(cv_count):
+            if cv_idx == cv_count - 1:
+                # The last CV gets the new data from the current row
+                water_value = water_column[frame + cv_count - 1]
+            else:
+                # All other CVs take the water value from the next CV (shift down by one index)
+                water_value = water_column[frame + cv_idx + 1]
+            
+            # Set the Z position of the CV (translation along the Z-axis)
+            point = points[cv_idx]
+            point.co.z = point.co.z + water_value  # Adjust the Z position
+
+            # Insert a keyframe for the Z position
+            point.keyframe_insert(data_path="co", index=2, frame=frame + 1)  # Index 2 is for the Z-coordinate
+    
+    # Switch back to object mode when done
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+    print("Keyframes set for all curve CVs up to frame", frames_total)
+else:
+    print(f"Object 'birdCurve' not found or insufficient data.")
