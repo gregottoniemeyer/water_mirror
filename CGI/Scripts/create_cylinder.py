@@ -1,52 +1,56 @@
 import bpy
+import pandas as pd
+from mathutils import Color
 
+# Load the CSV file
+file_path = "/Users/gregniemeyer/Documents/Art Projects/WaterMirror/github/data/sst_all.csv"
+data = pd.read_csv(file_path)
 
-# Set parameters for the small cylinders
-diameter = 0.2  # Diameter of the cylinders
-total_length = 2.7479  # Total length along the X-axis
-spans = 512  # Number of small cylinders (spans)
-vertices = 24  # Number of facets (vertices around the circumference)
+# Access the color ramp elements
+material = bpy.data.materials.get("sst_gradient")
+if material is None:
+    raise ValueError("Material 'sst_gradient' not found.")
 
-# Calculate the length of each small cylinder
-single_length = total_length / spans
+color_ramp = material.node_tree.nodes["Color Ramp"].color_ramp
 
-# Create a collection to store individual cylinders (optional for organization)
-cylinder_collection = bpy.data.collections.new("Cylinders")
-bpy.context.scene.collection.children.link(cylinder_collection)
+# Define a function to map values from 0-1 to colors between blue and red
+def value_to_color(value):
+    color = Color((0, 0, 0))  # Initialize as black
+    if value <= 0.25:
+        color.r = 0.0
+        color.g = value / 0.25
+        color.b = 1.0 - color.g
+    elif value <= 0.5:
+        color.r = (value - 0.25) / 0.25
+        color.g = 1.0
+        color.b = 0.0
+    elif value <= 0.75:
+        color.r = 1.0
+        color.g = 1.0 - (value - 0.5) / 0.25
+        color.b = 0.0
+    else:
+        color.r = 1.0
+        color.g = (1.0 - value) / 0.25
+        color.b = 0.0
+    return color
 
-# Loop to create and position 512 adjacent cylinders
-for i in range(spans):
-    # Create a cylinder (default is along Z-axis)
-    bpy.ops.mesh.primitive_cylinder_add(
-        radius=diameter / 2,
-        depth=single_length,
-        vertices=vertices,
-        end_fill_type='NGON',
-        location=(single_length * i, 0, 0)  # Position each cylinder along the X-axis
-    )
+# Iterate through the first 2000 rows of the data
+num_rows = min(2000, len(data))
+for frame in range(num_rows):
+    # Get values from the CSV file (assuming they are in the first 4 columns for the 4 color stops)
+    values = data.iloc[frame, :4]
     
-    # Get the created cylinder object
-    new_cylinder = bpy.context.object
-    
-    # Rotate the cylinder to align its axis along the X-axis (rotate 90 degrees around Y-axis)
-    new_cylinder.rotation_euler[1] = 1.5708  # 1.5708 radians = 90 degrees
-    
-    # Add the cylinder to the collection
-    bpy.data.collections['Cylinders'].objects.link(new_cylinder)
-    bpy.context.scene.collection.objects.unlink(new_cylinder)
+    for i, val in enumerate(values):
+        if i >= len(color_ramp.elements):
+            break  # Ensure we don't exceed available color stops
+            
+        # Map the value to the color
+        color = value_to_color(val)
+        
+        # Set the color for the color ramp element
+        color_ramp.elements[i].color = (color.r, color.g, color.b, 1.0)  # RGBA
+        
+        # Insert a keyframe for the color at the specified frame
+        color_ramp.elements[i].keyframe_insert(data_path="color", frame=frame)
 
-# Join all cylinders into a single mesh
-bpy.ops.object.select_all(action='DESELECT')  # Deselect all objects first
-for obj in bpy.data.collections['Cylinders'].objects:
-    obj.select_set(True)  # Select all cylinders
-
-# Join all selected objects into one
-bpy.context.view_layer.objects.active = bpy.data.collections['Cylinders'].objects[0]
-bpy.ops.object.join()
-
-# Rename the final joined object
-final_cylinder = bpy.context.object
-final_cylinder.name = "Joined_Cylinder_X_Axis"
-
-# Switch back to object mode (in case we're in edit mode)
-bpy.ops.object.mode_set(mode='OBJECT')
+print("Keyframes set for the color ramp from frame 0 to", num_rows - 1)
